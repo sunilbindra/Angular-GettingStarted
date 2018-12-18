@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { IProduct } from "./IProduct";
+import { ProductService } from "./product.service";
 
 
 @Component({
@@ -22,9 +23,11 @@ export class ProductListComponent implements OnInit{
       this._listFilter=value;
       this.filteredProducts = this.listFilter ? this.performFilter(this.listFilter) : this.products;
     }
+    errorMessage: string;
+    ;
     filteredProducts:IProduct[];
-    products: IProduct[] = [
-        {
+    products: IProduct[]= [];
+        /*{
           "productId": 1,
           "productName": "Leaf Rake",
           "productCode": "GDN-0011",
@@ -74,11 +77,11 @@ export class ProductListComponent implements OnInit{
           "starRating": 4.6,
           "imageUrl": "https://openclipart.org/image/300px/svg_to_png/120337/xbox-controller_01.png"
         }
-    ];
+    ];*/
     
-    constructor(){
-      this.filteredProducts=this.products;
-      this.listFilter='cart';
+      constructor(private productService: ProductService){
+      
+      
     }
     performFilter(filterBy: string):IProduct[]{
       filterBy=filterBy.toLocaleLowerCase();
@@ -92,6 +95,17 @@ export class ProductListComponent implements OnInit{
 
     ngOnInit(): void {
       console.log('In OnInit');
+      //this.products =this.productService.getProducts();
+      this.productService.getProducts().subscribe(
+        products => { 
+          this.products = products;
+          this.filteredProducts =this.products;
+        },
+      error => this.errorMessage = <any>error
+     );
+
+      //this.filteredProducts=this.products;
+      this.listFilter='cart';
     }
 
     OnRatingClicked(message: string): void{
